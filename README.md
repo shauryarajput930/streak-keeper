@@ -66,7 +66,7 @@ streak-keeper/
 ```bash
 git clone https://github.com/shauryarajput930/streak-keeper.git
 cd streak-keeper
-npm run install:all
+pnpm run install:all
 ```
 
 ### 2. Create Supabase Project
@@ -107,7 +107,7 @@ CLIENT_URL=http://localhost:3000
 ### 5. Run in development
 
 ```bash
-npm run dev
+pnpm run dev
 # Server: http://localhost:5000
 # Client: http://localhost:3000
 ```
@@ -198,15 +198,18 @@ MIT License - feel free to use this project for your own GitHub streak automatio
 ## Production Deployment
 
 ```bash
+# first install pnpm if its not aready on the system, its a fast package manager which uses file syslinks instead of heavy cloning
+npm install -g pnpm
+# Then continue
 # Build React
-npm run build
+pnpm run build
 
 # Set NODE_ENV=production in .env
 # Set CLIENT_URL to your domain
 # Update GITHUB_CALLBACK_URL to your domain
 
 # Run
-npm start
+pnpm start
 ```
 
 The Express server serves the React build automatically in production.
