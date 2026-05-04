@@ -11,7 +11,17 @@ async function startJobForUser(userId) {
 
   stopJobForUser(userId); // clear any existing
 
-  const { hour, minute } = user.scheduler_config;
+  let { hour, minute, jitterMin } = user.scheduler_config;
+
+  // Input validation
+  hour = parseInt(hour, 10);
+  minute = parseInt(minute, 10);
+  jitterMin = parseInt(jitterMin, 10);
+
+  if (isNaN(hour) || hour < 0 || hour > 23) hour = 0;
+  if (isNaN(minute) || minute < 0 || minute > 59) minute = 0;
+  if (isNaN(jitterMin) || jitterMin < 0 || jitterMin > 60) jitterMin = 0; // Max 1 hour jitter
+
   const expression = `${minute} ${hour} * * *`;
 
   if (!cron.validate(expression)) {
@@ -22,7 +32,7 @@ async function startJobForUser(userId) {
   const task = cron.schedule(expression, async () => {
     await CronLog.create({ userId, level: 'info', message: `Scheduled job triggered (${expression})`, source: 'scheduler' });
     try {
-      const jitter = (user.scheduler_config.jitterMin || 0) * 60 * 1000 * Math.random();
+      const jitter = jitterMin * 60 * 1000 * Math.random();
       if (jitter > 0) await new Promise(r => setTimeout(r, jitter));
       await pushStreakCommit(userId, 'scheduler');
     } catch (err) {
